@@ -735,7 +735,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       await firebaseSignOut(auth);
     } catch {
-      // Ignore if not signed into Firebase
+      // Ignore if not signed into auth provider
+    }
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("snappost_gemini_api_key_v1");
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      localStorage.removeItem(STORAGE_KEYS.EMAIL_FOR_SIGN_IN);
     }
     setUser(null);
   }, []);
@@ -1129,16 +1134,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [user]
   );
 
+  const scopedProjects = user
+    ? user.role === "admin"
+      ? projects
+      : projects.filter((p) => p.userId === user.id)
+    : [];
+  const scopedBrandKits = user
+    ? user.role === "admin"
+      ? brandKits
+      : brandKits.filter((b) => b.userId === user.id)
+    : [];
+  const scopedTransactions = user
+    ? user.role === "admin"
+      ? transactions
+      : transactions.filter((t) => t.userId === user.id)
+    : [];
+  const scopedHistory = user
+    ? user.role === "admin"
+      ? generationHistory
+      : generationHistory.filter((h) => h.userId === user.id)
+    : [];
+
   return (
     <AppContext.Provider
       value={{
         user,
-        allUsers,
+        allUsers: user?.role === "admin" ? allUsers : user ? [user] : [],
         isLoadingAuth,
-        projects,
-        brandKits,
-        transactions,
-        generationHistory,
+        projects: scopedProjects,
+        brandKits: scopedBrandKits,
+        transactions: scopedTransactions,
+        generationHistory: scopedHistory,
         login,
         sendMagicEmailLink,
         completeMagicEmailLinkSignIn,

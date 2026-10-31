@@ -28,10 +28,16 @@ export async function POST(req: NextRequest) {
         );
       }
     } else {
-      // Server-side role verification for local/hybrid runtime
+      // Strict server-side admin verification against configured ADMIN_EMAILS allowlist
+      const allowedAdmins = (process.env.ADMIN_EMAILS || "")
+        .split(",")
+        .map((e) => e.trim().toLowerCase())
+        .filter(Boolean);
+
       const isServerVerifiedAdmin =
-        role === "admin" ||
-        (typeof email === "string" && email.toLowerCase().includes("admin"));
+        role === "admin" &&
+        typeof email === "string" &&
+        allowedAdmins.includes(email.toLowerCase());
 
       if (!isServerVerifiedAdmin) {
         return NextResponse.json(

@@ -48,17 +48,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Security: Reject oversized payloads (>12MB base64 ~ 8.5MB image)
+    if (imageDataUrl.length > 12 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "Image payload exceeds maximum allowed size (8MB)." },
+        { status: 413 }
+      );
+    }
+
+    const safeStr = (val?: string, max = 300) =>
+      typeof val === "string" ? val.trim().slice(0, max) : "";
+
     const systemPrompt = `You are an elite SaaS product marketer and UI/UX vision analyst powered by Google Gemini 3.8 Flash.
 Analyze the uploaded screenshot and any user-supplied context.
 CRITICAL RULE: Do NOT invent product features that are not visible in the screenshot or explicitly supplied by the user. Mark any inferred or less-certain observations with confidence: "uncertain" or "medium".`;
 
     const userContextText = `User Supplied Context:
-- Product Name: ${context.productName || "Not specified (infer from UI text if visible)"}
-- Product Description: ${context.productDescription || "Not specified"}
-- Target Audience: ${context.targetAudience || "Not specified"}
-- Brand Name: ${context.brandName || context.productName || "Not specified"}
-- Desired Tone: ${context.desiredTone || "Professional"}
-- Main Objective: ${context.mainObjective || "Drive product awareness & signups"}`;
+- Product Name: ${safeStr(context.productName, 120) || "Not specified (infer from UI text if visible)"}
+- Product Description: ${safeStr(context.productDescription, 500) || "Not specified"}
+- Target Audience: ${safeStr(context.targetAudience, 200) || "Not specified"}
+- Brand Name: ${safeStr(context.brandName || context.productName, 120) || "Not specified"}
+- Desired Tone: ${safeStr(context.desiredTone, 60) || "Professional"}
+- Main Objective: ${safeStr(context.mainObjective, 200) || "Drive product awareness & signups"}`;
 
     const analysisSchema = {
       type: "object",

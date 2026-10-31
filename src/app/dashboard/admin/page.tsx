@@ -52,9 +52,7 @@ export default function AdminDashboardPage() {
           setServerVerified(true);
         }
       } catch {
-        const isAllowed =
-          user.role === "admin" ||
-          user.email.toLowerCase().includes("admin");
+        const isAllowed = user.role === "admin";
         setServerVerified(isAllowed);
         if (!isAllowed) {
           setServerError("Forbidden: Admin privileges required.");

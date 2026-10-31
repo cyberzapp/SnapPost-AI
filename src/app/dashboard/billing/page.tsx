@@ -67,25 +67,17 @@ function BillingPageInner() {
       setGatewayNotice({
         tier,
         message:
-          "Live payment gateway credentials are not configured in this environment. No live charge was created.",
+          "Live payment gateway credentials are not configured in this environment. Please contact support or configure payment gateway keys on the server to process upgrades.",
       });
     } catch {
       setGatewayNotice({
         tier,
         message:
-          "Live payment gateway is not configured in this environment. You can activate the plan in Sandbox Mode below.",
+          "Unable to initiate live payment checkout at this time. Please try again shortly.",
       });
     } finally {
       setLoadingTier(null);
     }
-  };
-
-  const handleConfirmSandboxUpgrade = (tier: PlanTier) => {
-    upgradePlan(tier, "sandbox");
-    setGatewayNotice(null);
-    setSandboxActivated(
-      `Sandbox Mode: Activated ${tier} Plan and allocated monthly AI credits (No real payment was charged).`
-    );
   };
 
   return (
@@ -166,37 +158,25 @@ function BillingPageInner() {
       )}
 
       {gatewayNotice && (
-        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-6 space-y-4">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400 mt-0.5" />
-            <div>
-              <h3 className="text-sm font-bold text-amber-200">
-                Payment Gateway in Test Mode
-              </h3>
-              <p className="mt-1 text-xs leading-relaxed text-amber-100/90">
-                {gatewayNotice.message} For evaluation, you can test upgrading
-                to <strong>{gatewayNotice.tier}</strong> in Sandbox mode below:
-              </p>
+        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-6 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-bold text-amber-200">
+                  Checkout Unavailable for {gatewayNotice.tier} Plan
+                </h3>
+                <p className="mt-1 text-xs leading-relaxed text-amber-100/90">
+                  {gatewayNotice.message}
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 pl-8">
-            <button
-              type="button"
-              onClick={() => handleConfirmSandboxUpgrade(gatewayNotice.tier)}
-              className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-amber-400"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>
-                Activate {gatewayNotice.tier} Plan in Sandbox Mode (No Charge)
-              </span>
-            </button>
             <button
               type="button"
               onClick={() => setGatewayNotice(null)}
               className="text-xs font-semibold text-amber-200 underline"
             >
-              Cancel
+              Dismiss
             </button>
           </div>
         </div>
