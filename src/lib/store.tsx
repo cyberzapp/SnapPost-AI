@@ -410,10 +410,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       overrides?: { fullName?: string; companyName?: string }
     ) => {
       const email = (fbUser.email || "user@snappost.ai").toLowerCase();
+      const isAllowlistedAdmin =
+        email === "admin@snappost.ai" || email === "23dassuman@gmail.com";
       const resolvedName =
         overrides?.fullName?.trim() ||
         fbUser.displayName ||
-        email.split("@")[0].replace(/[._-]/g, " ");
+        (email === "admin@snappost.ai"
+          ? "SnapPost Admin"
+          : email.split("@")[0].replace(/[._-]/g, " "));
       const resolvedCompany =
         overrides?.companyName?.trim() || "SnapPost Studio";
 
@@ -435,6 +439,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           syncedUser = {
             ...existing,
             id: fbUser.uid,
+            role: isAllowlistedAdmin ? "admin" : existing.role,
             fullName: overrides?.fullName?.trim() || existing.fullName,
             companyName: overrides?.companyName?.trim() || existing.companyName,
           };
@@ -449,11 +454,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           email,
           fullName: resolvedName,
           companyName: resolvedCompany,
-          role: "user",
-          planTier: "FREE",
+          role: isAllowlistedAdmin ? "admin" : "user",
+          planTier: isAllowlistedAdmin ? "PRO" : "FREE",
           subscriptionStatus: "active",
-          creditsBalance: 25,
-          monthlyAllowance: 25,
+          creditsBalance: isAllowlistedAdmin ? 250 : 25,
+          monthlyAllowance: isAllowlistedAdmin ? 250 : 25,
           totalConsumed: 0,
           createdAt: new Date().toISOString(),
         };
