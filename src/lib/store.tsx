@@ -121,6 +121,41 @@ const STORAGE_KEYS = {
   EMAIL_FOR_SIGN_IN: "emailForSignIn",
 };
 
+const LEGACY_KEYS = [
+  "snappost_current_user_v1",
+  "snappost_all_users_v1",
+  "snappost_projects_v1",
+  "snappost_brand_kits_v1",
+  "snappost_transactions_v1",
+  "snappost_gen_history_v1",
+];
+
+function safeSetStorageItem(key: string, value: string) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Free up quota by removing legacy v1 keys and trimming large project caches
+    try {
+      for (const oldKey of LEGACY_KEYS) {
+        localStorage.removeItem(oldKey);
+      }
+      localStorage.setItem(key, value);
+    } catch {
+      try {
+        if (key === STORAGE_KEYS.PROJECTS) {
+          const parsed = JSON.parse(value);
+          if (Array.isArray(parsed) && parsed.length > 2) {
+            localStorage.setItem(key, JSON.stringify(parsed.slice(0, 2)));
+          }
+        }
+      } catch {
+        // Ignore storage quota error so React never crashes
+      }
+    }
+  }
+}
+
 function createInitialSeedData(userId: string) {
   const now = new Date().toISOString();
   const defaultBrandKit: BrandKit = {
@@ -366,24 +401,54 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   >([]);
 
   const syncFirebaseUserToStore = useCallback(
-    (fbUser: { uid: string; email: string | null; displayName: string | null }) => {
+    (
+      fbUser: {
+        uid: string;
+        email: string | null;
+        displayName: string | null;
+      },
+      overrides?: { fullName?: string; companyName?: string }
+    ) => {
       const email = (fbUser.email || "user@snappost.ai").toLowerCase();
+      const resolvedName =
+        overrides?.fullName?.trim() ||
+        fbUser.displayName ||
+        email.split("@")[0].replace(/[._-]/g, " ");
+      const resolvedCompany =
+        overrides?.companyName?.trim() || "SnapPost Studio";
 
-      setAllUsers((prevUsers) => {
-        const existing = prevUsers.find(
+      let syncedUser: RegisteredUserRecord | null = null;
+
+      try {
+        const storedRaw =
+          typeof window !== "undefined"
+            ? localStorage.getItem(STORAGE_KEYS.ALL_USERS)
+            : null;
+        const storedList: RegisteredUserRecord[] = storedRaw
+          ? JSON.parse(storedRaw)
+          : [];
+        const existing = storedList.find(
           (u) => u.id === fbUser.uid || u.email.toLowerCase() === email
         );
+
         if (existing) {
-          setUser(existing);
-          return prevUsers;
+          syncedUser = {
+            ...existing,
+            id: fbUser.uid,
+            fullName: overrides?.fullName?.trim() || existing.fullName,
+            companyName: overrides?.companyName?.trim() || existing.companyName,
+          };
         }
-        const newAccount: RegisteredUserRecord = {
+      } catch {
+        // Ignore storage read error
+      }
+
+      if (!syncedUser) {
+        syncedUser = {
           id: fbUser.uid,
           email,
-          fullName:
-            fbUser.displayName ||
-            email.split("@")[0].replace(/[._-]/g, " "),
-          companyName: "SnapPost Studio",
+          fullName: resolvedName,
+          companyName: resolvedCompany,
           role: "user",
           planTier: "FREE",
           subscriptionStatus: "active",
@@ -392,24 +457,44 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           totalConsumed: 0,
           createdAt: new Date().toISOString(),
         };
-        setUser(newAccount);
+      }
 
-        const seed = createInitialSeedData(newAccount.id);
-        setProjects((prev) =>
-          prev.length > 0 ? prev : [seed.sampleProject]
-        );
-        setBrandKits((prev) =>
-          prev.length > 0 ? prev : [seed.defaultBrandKit]
-        );
-        setTransactions((prev) =>
-          prev.length > 0 ? prev : seed.initialTransactions
-        );
-        setGenerationHistory((prev) =>
-          prev.length > 0 ? prev : seed.initialHistory
-        );
+      const finalUser = syncedUser;
+      setUser(finalUser);
 
-        return [newAccount, ...prevUsers];
+      safeSetStorageItem(
+        STORAGE_KEYS.CURRENT_USER,
+        JSON.stringify(finalUser)
+      );
+
+      setAllUsers((prevUsers) => {
+        const filtered = prevUsers.filter(
+          (u) => u.id !== fbUser.uid && u.email.toLowerCase() !== email
+        );
+        return [finalUser, ...filtered];
       });
+
+      const seed = createInitialSeedData(finalUser.id);
+      setProjects((prev) =>
+        prev.some((p) => p.userId === finalUser.id)
+          ? prev
+          : [seed.sampleProject, ...prev.slice(0, 3)]
+      );
+      setBrandKits((prev) =>
+        prev.some((b) => b.userId === finalUser.id)
+          ? prev
+          : [seed.defaultBrandKit, ...prev]
+      );
+      setTransactions((prev) =>
+        prev.some((t) => t.userId === finalUser.id)
+          ? prev
+          : [...seed.initialTransactions, ...prev]
+      );
+      setGenerationHistory((prev) =>
+        prev.some((h) => h.userId === finalUser.id)
+          ? prev
+          : [...seed.initialHistory, ...prev]
+      );
     },
     []
   );
@@ -419,6 +504,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     initFirebaseAnalytics().catch(() => null);
 
     try {
+      for (const oldKey of LEGACY_KEYS) {
+        localStorage.removeItem(oldKey);
+      }
+
       const storedUsersRaw = localStorage.getItem(STORAGE_KEYS.ALL_USERS);
       const loadedUsers: RegisteredUserRecord[] = storedUsersRaw
         ? JSON.parse(storedUsersRaw)
@@ -459,34 +548,38 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, [syncFirebaseUserToStore]);
 
-  // Persist changes
+  // Persist changes safely without QuotaExceededError crashes
   useEffect(() => {
     if (isLoadingAuth) return;
     if (user) {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+      safeSetStorageItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
     } else {
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      try {
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      } catch {
+        // Ignore
+      }
     }
   }, [user, isLoadingAuth]);
 
   useEffect(() => {
     if (isLoadingAuth) return;
-    localStorage.setItem(STORAGE_KEYS.ALL_USERS, JSON.stringify(allUsers));
+    safeSetStorageItem(STORAGE_KEYS.ALL_USERS, JSON.stringify(allUsers));
   }, [allUsers, isLoadingAuth]);
 
   useEffect(() => {
     if (isLoadingAuth) return;
-    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+    safeSetStorageItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
   }, [projects, isLoadingAuth]);
 
   useEffect(() => {
     if (isLoadingAuth) return;
-    localStorage.setItem(STORAGE_KEYS.BRAND_KITS, JSON.stringify(brandKits));
+    safeSetStorageItem(STORAGE_KEYS.BRAND_KITS, JSON.stringify(brandKits));
   }, [brandKits, isLoadingAuth]);
 
   useEffect(() => {
     if (isLoadingAuth) return;
-    localStorage.setItem(
+    safeSetStorageItem(
       STORAGE_KEYS.TRANSACTIONS,
       JSON.stringify(transactions)
     );
@@ -494,7 +587,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoadingAuth) return;
-    localStorage.setItem(
+    safeSetStorageItem(
       STORAGE_KEYS.HISTORY,
       JSON.stringify(generationHistory)
     );
@@ -632,20 +725,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [syncFirebaseUserToStore]
   );
 
-  // 4. Firebase Google Sign-In Popup
+  // 4. Google Sign-In Popup
   const loginWithGoogle = useCallback(async (): Promise<{ error?: string }> => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       syncFirebaseUserToStore(result.user);
       return {};
     } catch (err: unknown) {
+      const code = (err as { code?: string })?.code || "";
+      if (
+        code === "auth/popup-closed-by-user" ||
+        code === "auth/cancelled-popup-request"
+      ) {
+        return {
+          error: "Sign-in window was closed before completing authentication.",
+        };
+      }
       const message =
         err instanceof Error ? err.message : "Google Sign-In failed.";
       return { error: message };
     }
   }, [syncFirebaseUserToStore]);
 
-  // 5. Firebase Email & Password Registration
+  // 5. Email & Password Registration
   const register = useCallback(
     async (
       fullName: string,
@@ -664,7 +766,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return { error: "Password must be at least 6 characters." };
       }
 
-      let firebaseUid = "";
       try {
         const cred = await createUserWithEmailAndPassword(
           auth,
@@ -674,14 +775,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         await firebaseUpdateProfile(cred.user, {
           displayName: fullName.trim(),
         });
-        firebaseUid = cred.user.uid;
+        syncFirebaseUserToStore(cred.user, {
+          fullName: fullName.trim(),
+          companyName: companyName.trim() || `${fullName.trim()}'s Studio`,
+        });
+        return {};
       } catch (fbErr: unknown) {
         const code = (fbErr as { code?: string })?.code || "";
         if (code === "auth/email-already-in-use") {
-          return {
-            error:
-              "This email is already registered. Please sign in instead.",
-          };
+          // If the account was already created in Auth, sign in seamlessly if the password matches
+          try {
+            const signInCred = await signInWithEmailAndPassword(
+              auth,
+              normalized,
+              password
+            );
+            syncFirebaseUserToStore(signInCred.user, {
+              fullName: fullName.trim(),
+              companyName: companyName.trim() || `${fullName.trim()}'s Studio`,
+            });
+            return {};
+          } catch {
+            return {
+              error:
+                "This email is already registered. Please sign in instead.",
+            };
+          }
         }
         return {
           error:
@@ -689,46 +808,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             "Registration failed. Please check your details and try again.",
         };
       }
-
-      const newUser: RegisteredUserRecord = {
-        id: firebaseUid,
-        email: normalized,
-        fullName: fullName.trim(),
-        companyName: companyName.trim() || `${fullName.trim()}'s Studio`,
-        role: "user",
-        planTier: "FREE",
-        subscriptionStatus: "active",
-        creditsBalance: 25,
-        monthlyAllowance: 25,
-        totalConsumed: 0,
-        createdAt: new Date().toISOString(),
-      };
-
-      setAllUsers((prev) => [
-        newUser,
-        ...prev.filter((u) => u.email.toLowerCase() !== normalized),
-      ]);
-      setUser(newUser);
-
-      const seed = createInitialSeedData(newUser.id);
-      setProjects((prev) => [seed.sampleProject, ...prev]);
-      setBrandKits((prev) => [seed.defaultBrandKit, ...prev]);
-      setTransactions((prev) => [
-        {
-          id: `tx-welcome-${Date.now()}`,
-          userId: newUser.id,
-          amount: 25,
-          balanceAfter: 25,
-          actionType: "monthly_allocation",
-          description: "Welcome Starter Free AI Credit Allocation",
-          createdAt: new Date().toISOString(),
-        },
-        ...prev,
-      ]);
-
-      return {};
     },
-    []
+    [syncFirebaseUserToStore]
   );
 
   const logout = useCallback(async () => {
