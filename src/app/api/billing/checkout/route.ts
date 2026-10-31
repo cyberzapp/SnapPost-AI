@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "https://snapost-ai.breathy.in";
 
     if (provider === "stripe") {
       const stripeSecret = process.env.STRIPE_SECRET_KEY;
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
           configured: false,
           provider: "stripe",
           message:
-            "Stripe API credentials (STRIPE_SECRET_KEY) are not configured in this environment. No live charge was created.",
+            "Payment gateway credentials are not configured in this environment. No live charge was created.",
         });
       }
 
@@ -88,6 +89,48 @@ export async function POST(req: NextRequest) {
       const authHeader = Buffer.from(`${rzpKeyId}:${rzpSecret}`).toString(
         "base64"
       );
+
+      // If a recurring Subscription Plan ID is configured in Secret Manager, create a recurring subscription
+      const rzpPlanId =
+        plan.tier === "PRO"
+          ? process.env.RAZORPAY_PRO_PLAN_ID
+          : process.env.RAZORPAY_BUSINESS_PLAN_ID;
+
+      if (rzpPlanId && !rzpPlanId.includes("your-")) {
+        const subRes = await fetch(
+          "https://api.razorpay.com/v1/subscriptions",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${authHeader}`,
+            },
+            body: JSON.stringify({
+              plan_id: rzpPlanId,
+              total_count: 12,
+              quantity: 1,
+              customer_notify: 1,
+              notes: {
+                planTier: plan.tier,
+                userId: userId || "",
+                userEmail: userEmail || "",
+              },
+            }),
+          }
+        );
+
+        if (subRes.ok) {
+          const subData = await subRes.json();
+          return NextResponse.json({
+            configured: true,
+            provider: "razorpay",
+            subscriptionId: subData.id,
+            checkoutUrl: subData.short_url,
+            keyId: rzpKeyId,
+          });
+        }
+      }
+
       const orderRes = await fetch("https://api.razorpay.com/v1/orders", {
         method: "POST",
         headers: {

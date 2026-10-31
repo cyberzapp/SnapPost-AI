@@ -1,0 +1,41 @@
+# Firebase App Hosting / Cloud Functions Secret Manager Configuration
+runConfig:
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: NEXT_PUBLIC_APP_URL
+    value: https://snapost-ai.breathy.in
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: GEMINI_MODEL
+    value: gemini-3.8-flash
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # Secrets stored in Google Cloud Secret Manager
+  - variable: GEMINI_API_KEY
+    secret: GEMINI_API_KEY
+    availability:
+      - RUNTIME
+
+  - variable: RAZORPAY_KEY_ID
+    secret: RAZORPAY_KEY_ID
+    availability:
+      - RUNTIME
+
+  - variable: RAZORPAY_KEY_SECRET
+    secret: RAZORPAY_KEY_SECRET
+    availability:
+      - RUNTIME
+
+  - variable: RAZORPAY_WEBHOOK_SECRET
+    secret: RAZORPAY_WEBHOOK_SECRET
+    availability:
+      - RUNTIME

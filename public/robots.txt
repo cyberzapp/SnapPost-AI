@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/admin
+
+Sitemap: https://snapost-ai.breathy.in/sitemap.xml
