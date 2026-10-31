@@ -723,7 +723,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (code === "auth/email-already-in-use") {
           return {
             error:
-              "This email is already registered in Firebase Auth. Please sign in instead.",
+              "This email is already registered. Please sign in instead.",
           };
         }
       }
@@ -783,7 +783,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       await sendPasswordResetEmail(auth, email.trim());
       return {
-        message: `Password reset email sent via Firebase Auth to ${email}. Please check your inbox.`,
+        message: `Password reset email sent to ${email}. Please check your inbox.`,
       };
     } catch (err: unknown) {
       const msg =
@@ -1051,7 +1051,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         amount: planSpec.creditsPerMonth,
         balanceAfter: newBalance,
         actionType: "plan_upgrade",
-        description: `Plan upgraded to ${planSpec.name} (${provider.toUpperCase()})`,
+        description: `Plan upgraded to ${planSpec.name}`,
         createdAt: new Date().toISOString(),
       };
       setTransactions((prev) => [tx, ...prev]);

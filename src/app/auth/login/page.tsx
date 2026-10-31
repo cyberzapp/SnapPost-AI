@@ -108,12 +108,12 @@ export default function LoginPage() {
           Sign in to your workspace
         </h1>
         <p className="mt-2 text-center text-sm text-slate-400">
-          Powered by Firebase Authentication (`snappost-si`) •{" "}
+          Or{" "}
           <Link
             href="/auth/register"
             className="font-semibold text-violet-400 hover:text-violet-300"
           >
-            Create a new account
+            create a new account with 25 free AI credits
           </Link>
         </p>
       </div>
@@ -156,7 +156,7 @@ export default function LoginPage() {
           {verifyingMagicLink && (
             <div className="mb-5 flex items-center gap-2 rounded-lg border border-violet-500/30 bg-violet-500/10 p-3 text-xs text-violet-200">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-violet-400 border-t-transparent" />
-              <span>Verifying your Firebase passwordless sign-in link...</span>
+              <span>Verifying your passwordless sign-in link...</span>
             </div>
           )}
 
@@ -174,10 +174,9 @@ export default function LoginPage() {
                 <span>Passwordless Sign-In Link Sent!</span>
               </div>
               <p className="leading-relaxed">
-                We dispatched a secure Firebase sign-in link to{" "}
-                <strong>{magicLinkSentTo}</strong> and saved{" "}
-                <code className="font-mono">emailForSignIn</code> in local
-                storage. Click the link in your inbox to sign in automatically.
+                We dispatched a secure sign-in link to{" "}
+                <strong>{magicLinkSentTo}</strong>. Click the link in your inbox
+                to sign in automatically.
               </p>
             </div>
           )}
@@ -268,8 +267,8 @@ export default function LoginPage() {
                   />
                 </div>
                 <p className="mt-2 text-xs text-slate-400">
-                  Uses Firebase <code className="font-mono">sendSignInLinkToEmail</code>{" "}
-                  to email you a one-click passwordless sign-in link.
+                  We will email you a secure one-click passwordless sign-in
+                  link.
                 </p>
               </div>
 
@@ -306,7 +305,7 @@ export default function LoginPage() {
               disabled={loading}
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/10"
             >
-              <span>Continue with Google (Firebase Auth)</span>
+              <span>Continue with Google</span>
             </button>
           </div>
         </div>

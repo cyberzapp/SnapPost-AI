@@ -16,11 +16,10 @@ import { PlanTier } from "@/types";
 function BillingPageInner() {
   const searchParams = useSearchParams();
   const { user, upgradePlan } = useAppStore();
-  const [provider, setProvider] = useState<"stripe" | "razorpay">("stripe");
+  const [currency, setCurrency] = useState<"USD" | "INR">("USD");
   const [loadingTier, setLoadingTier] = useState<PlanTier | null>(null);
   const [gatewayNotice, setGatewayNotice] = useState<{
     tier: PlanTier;
-    provider: "stripe" | "razorpay";
     message: string;
   } | null>(null);
   const [sandboxActivated, setSandboxActivated] = useState<string | null>(
@@ -46,7 +45,7 @@ function BillingPageInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planTier: tier,
-          provider,
+          provider: currency === "USD" ? "stripe" : "razorpay",
           userEmail: user?.email,
           userId: user?.id,
         }),
@@ -58,29 +57,23 @@ function BillingPageInner() {
         return;
       }
 
-      if (data.configured && data.provider === "razorpay" && data.orderId) {
+      if (data.configured && data.orderId) {
         setSandboxActivated(
-          `Razorpay Order (${data.orderId}) created. Complete checkout in Razorpay modal.`
+          `Payment Order (${data.orderId}) created. Complete checkout in the payment window.`
         );
         return;
       }
 
-      // Honest, transparent state when Stripe/Razorpay keys are not set in .env
       setGatewayNotice({
         tier,
-        provider,
         message:
-          data.message ||
-          `${provider.toUpperCase()} API keys are not configured in this environment.`,
+          "Live payment gateway credentials are not configured in this environment. No live charge was created.",
       });
-    } catch (e: unknown) {
+    } catch {
       setGatewayNotice({
         tier,
-        provider,
         message:
-          e instanceof Error
-            ? e.message
-            : "Payment provider connection unavailable.",
+          "Live payment gateway is not configured in this environment. You can activate the plan in Sandbox Mode below.",
       });
     } finally {
       setLoadingTier(null);
@@ -91,7 +84,7 @@ function BillingPageInner() {
     upgradePlan(tier, "sandbox");
     setGatewayNotice(null);
     setSandboxActivated(
-      `Developer Sandbox Mode: Activated ${tier} Plan and allocated monthly AI credits (No real payment was charged).`
+      `Sandbox Mode: Activated ${tier} Plan and allocated monthly AI credits (No real payment was charged).`
     );
   };
 
@@ -100,40 +93,39 @@ function BillingPageInner() {
       <div className="flex flex-col justify-between gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-center">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-violet-400">
-            Subscription &amp; Payment Architecture
+            Subscription &amp; Billing
           </span>
           <h1 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">
             Plans &amp; Billing
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Manage your subscription tier, monthly AI credit allocation, and
-            payment gateway preference.
+            Manage your subscription tier and monthly AI credit allowance.
           </p>
         </div>
 
-        {/* Provider Toggle (Stripe USD / Razorpay INR) */}
+        {/* Currency Toggle (USD $ / INR ₹) */}
         <div className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-[#121520] p-1">
           <button
             type="button"
-            onClick={() => setProvider("stripe")}
+            onClick={() => setCurrency("USD")}
             className={`rounded-lg px-3.5 py-2 text-xs font-bold transition ${
-              provider === "stripe"
+              currency === "USD"
                 ? "bg-violet-600 text-white"
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            Stripe Checkout (USD $)
+            USD ($)
           </button>
           <button
             type="button"
-            onClick={() => setProvider("razorpay")}
+            onClick={() => setCurrency("INR")}
             className={`rounded-lg px-3.5 py-2 text-xs font-bold transition ${
-              provider === "razorpay"
+              currency === "INR"
                 ? "bg-violet-600 text-white"
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            Razorpay (INR ₹)
+            INR (₹)
           </button>
         </div>
       </div>
@@ -162,7 +154,7 @@ function BillingPageInner() {
 
         <div className="flex items-center gap-2 text-xs text-slate-400">
           <ShieldCheck className="h-4 w-4 text-emerald-400" />
-          <span>Webhook &amp; server-side credit allocation enabled</span>
+          <span>Automatic monthly credit allocation enabled</span>
         </div>
       </div>
 
@@ -173,27 +165,17 @@ function BillingPageInner() {
         </div>
       )}
 
-      {/* Honest Unconfigured Gateway Notice (Never pretending live payment succeeded) */}
       {gatewayNotice && (
         <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-6 space-y-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400 mt-0.5" />
             <div>
               <h3 className="text-sm font-bold text-amber-200">
-                Live {gatewayNotice.provider.toUpperCase()} Credentials Not
-                Configured (Development / Test Mode)
+                Payment Gateway in Test Mode
               </h3>
               <p className="mt-1 text-xs leading-relaxed text-amber-100/90">
-                {gatewayNotice.message} Add{" "}
-                <code className="rounded bg-black/30 px-1.5 py-0.5 font-mono">
-                  {gatewayNotice.provider === "stripe"
-                    ? "STRIPE_SECRET_KEY"
-                    : "RAZORPAY_KEY_ID"}
-                </code>{" "}
-                in <code className="font-mono">.env.local</code> to process real
-                card transactions. For local evaluation, you can test upgrading
-                to <strong>{gatewayNotice.tier}</strong> in Developer Sandbox
-                mode below:
+                {gatewayNotice.message} For evaluation, you can test upgrading
+                to <strong>{gatewayNotice.tier}</strong> in Sandbox mode below:
               </p>
             </div>
           </div>
@@ -206,8 +188,7 @@ function BillingPageInner() {
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>
-                Simulate {gatewayNotice.tier} Upgrade in Sandbox Mode (No Real
-                Charge)
+                Activate {gatewayNotice.tier} Plan in Sandbox Mode (No Charge)
               </span>
             </button>
             <button
@@ -249,7 +230,7 @@ function BillingPageInner() {
 
                 <div className="mt-5 flex items-baseline gap-1">
                   <span className="text-3xl font-extrabold text-white">
-                    {provider === "stripe"
+                    {currency === "USD"
                       ? `$${plan.priceMonthly}`
                       : `₹${plan.priceInr.toLocaleString()}`}
                   </span>
@@ -287,8 +268,8 @@ function BillingPageInner() {
                 {isCurrent
                   ? "Current Active Plan"
                   : loadingTier === plan.tier
-                  ? "Connecting to Gateway..."
-                  : `${plan.ctaLabel} (${provider.toUpperCase()})`}
+                  ? "Processing..."
+                  : plan.ctaLabel}
               </button>
             </div>
           );

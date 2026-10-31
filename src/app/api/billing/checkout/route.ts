@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
           configured: false,
           provider: "razorpay",
           message:
-            "Razorpay API credentials (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET) are not configured in this environment. No live payment order was created.",
+            "Payment gateway credentials are not configured in this environment. No live payment order was created.",
         });
       }
 

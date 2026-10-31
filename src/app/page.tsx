@@ -650,7 +650,7 @@ export default function LandingPage() {
                     : "text-slate-400 hover:text-white"
                 }`}
               >
-                USD ($) — Stripe
+                USD ($)
               </button>
               <button
                 type="button"
@@ -661,7 +661,7 @@ export default function LandingPage() {
                     : "text-slate-400 hover:text-white"
                 }`}
               >
-                INR (₹) — Razorpay
+                INR (₹)
               </button>
             </div>
           </div>
