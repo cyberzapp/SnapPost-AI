@@ -112,12 +112,12 @@ interface AppContextValue {
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
 const STORAGE_KEYS = {
-  CURRENT_USER: "snappost_current_user_v1",
-  ALL_USERS: "snappost_all_users_v1",
-  PROJECTS: "snappost_projects_v1",
-  BRAND_KITS: "snappost_brand_kits_v1",
-  TRANSACTIONS: "snappost_transactions_v1",
-  HISTORY: "snappost_gen_history_v1",
+  CURRENT_USER: "snappost_current_user_v2",
+  ALL_USERS: "snappost_all_users_v2",
+  PROJECTS: "snappost_projects_v2",
+  BRAND_KITS: "snappost_brand_kits_v2",
+  TRANSACTIONS: "snappost_transactions_v2",
+  HISTORY: "snappost_gen_history_v2",
   EMAIL_FOR_SIGN_IN: "emailForSignIn",
 };
 
@@ -368,7 +368,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const syncFirebaseUserToStore = useCallback(
     (fbUser: { uid: string; email: string | null; displayName: string | null }) => {
       const email = (fbUser.email || "user@snappost.ai").toLowerCase();
-      const isAdmin = email.includes("admin");
 
       setAllUsers((prevUsers) => {
         const existing = prevUsers.find(
@@ -385,7 +384,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             fbUser.displayName ||
             email.split("@")[0].replace(/[._-]/g, " "),
           companyName: "SnapPost Studio",
-          role: isAdmin ? "admin" : "user",
+          role: "user",
           planTier: "FREE",
           subscriptionStatus: "active",
           creditsBalance: 25,
@@ -394,80 +393,67 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           createdAt: new Date().toISOString(),
         };
         setUser(newAccount);
+
+        const seed = createInitialSeedData(newAccount.id);
+        setProjects((prev) =>
+          prev.length > 0 ? prev : [seed.sampleProject]
+        );
+        setBrandKits((prev) =>
+          prev.length > 0 ? prev : [seed.defaultBrandKit]
+        );
+        setTransactions((prev) =>
+          prev.length > 0 ? prev : seed.initialTransactions
+        );
+        setGenerationHistory((prev) =>
+          prev.length > 0 ? prev : seed.initialHistory
+        );
+
         return [newAccount, ...prevUsers];
       });
     },
     []
   );
 
-  // Initialize from persistent storage + Firebase Auth & Analytics
+  // Initialize from persistent storage + Auth & Analytics
   useEffect(() => {
     initFirebaseAnalytics().catch(() => null);
 
     try {
-      const defaultAdminUser: RegisteredUserRecord = {
-        id: "usr-founder-admin",
-        email: "admin@snappost.ai",
-        fullName: "Alex Rivera",
-        companyName: "SnapPost Labs",
-        role: "admin",
-        planTier: "PRO",
-        subscriptionStatus: "active",
-        creditsBalance: 22,
-        monthlyAllowance: 250,
-        totalConsumed: 3,
-        createdAt: new Date(Date.now() - 86400000 * 14).toISOString(),
-      };
-
       const storedUsersRaw = localStorage.getItem(STORAGE_KEYS.ALL_USERS);
-      let loadedUsers: RegisteredUserRecord[] = storedUsersRaw
+      const loadedUsers: RegisteredUserRecord[] = storedUsersRaw
         ? JSON.parse(storedUsersRaw)
-        : [defaultAdminUser];
-
-      if (loadedUsers.length === 0) {
-        loadedUsers = [defaultAdminUser];
-      }
+        : [];
       setAllUsers(loadedUsers);
 
       const storedCurrentRaw = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
       const activeUser: UserAccountState | null = storedCurrentRaw
         ? JSON.parse(storedCurrentRaw)
-        : defaultAdminUser;
-
+        : null;
       setUser(activeUser);
 
-      const seed = createInitialSeedData(defaultAdminUser.id);
-
       const storedProjects = localStorage.getItem(STORAGE_KEYS.PROJECTS);
-      setProjects(
-        storedProjects ? JSON.parse(storedProjects) : [seed.sampleProject]
-      );
+      setProjects(storedProjects ? JSON.parse(storedProjects) : []);
 
       const storedKits = localStorage.getItem(STORAGE_KEYS.BRAND_KITS);
-      setBrandKits(
-        storedKits ? JSON.parse(storedKits) : [seed.defaultBrandKit]
-      );
+      setBrandKits(storedKits ? JSON.parse(storedKits) : []);
 
       const storedTx = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
-      setTransactions(
-        storedTx ? JSON.parse(storedTx) : seed.initialTransactions
-      );
+      setTransactions(storedTx ? JSON.parse(storedTx) : []);
 
       const storedHist = localStorage.getItem(STORAGE_KEYS.HISTORY);
-      setGenerationHistory(
-        storedHist ? JSON.parse(storedHist) : seed.initialHistory
-      );
+      setGenerationHistory(storedHist ? JSON.parse(storedHist) : []);
     } catch (e) {
       console.error("Failed to hydrate SnapPost store:", e);
-    } finally {
-      setIsLoadingAuth(false);
     }
 
-    // Listen for live Firebase Auth state changes
+    // Listen for live Auth state changes
     const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
       if (fbUser) {
         syncFirebaseUserToStore(fbUser);
+      } else {
+        setUser(null);
       }
+      setIsLoadingAuth(false);
     });
 
     return () => unsubscribe();
@@ -514,80 +500,51 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
   }, [generationHistory, isLoadingAuth]);
 
-  // 1. Firebase Email & Password Sign-In
+  // 1. Email & Password Sign-In
   const login = useCallback(
     async (email: string, password?: string): Promise<{ error?: string }> => {
       const normalized = email.trim().toLowerCase();
       if (!normalized || !normalized.includes("@")) {
         return { error: "Please enter a valid email address." };
       }
-
-      if (password) {
-        try {
-          const cred = await signInWithEmailAndPassword(
-            auth,
-            normalized,
-            password
-          );
-          syncFirebaseUserToStore(cred.user);
-          return {};
-        } catch (fbErr: unknown) {
-          const code = (fbErr as { code?: string })?.code || "";
-          // If the user doesn't exist in Firebase yet and is signing in with valid credentials, auto-provision or check local store
-          if (
-            code === "auth/user-not-found" ||
-            code === "auth/invalid-credential"
-          ) {
-            try {
-              const created = await createUserWithEmailAndPassword(
-                auth,
-                normalized,
-                password
-              );
-              syncFirebaseUserToStore(created.user);
-              return {};
-            } catch (createErr: unknown) {
-              const createCode =
-                (createErr as { code?: string })?.code || "";
-              if (createCode === "auth/email-already-in-use") {
-                return {
-                  error:
-                    "Incorrect password for this account. Try again or use Passwordless Email Link sign-in.",
-                };
-              }
-            }
-          }
-        }
+      if (!password) {
+        return { error: "Please enter your password." };
       }
 
-      const existing = allUsers.find(
-        (u) => u.email.toLowerCase() === normalized
-      );
-      if (existing) {
-        setUser(existing);
+      try {
+        const cred = await signInWithEmailAndPassword(
+          auth,
+          normalized,
+          password
+        );
+        syncFirebaseUserToStore(cred.user);
         return {};
+      } catch (fbErr: unknown) {
+        const code = (fbErr as { code?: string })?.code || "";
+        if (
+          code === "auth/user-not-found" ||
+          code === "auth/wrong-password" ||
+          code === "auth/invalid-credential"
+        ) {
+          return {
+            error:
+              "Invalid email or password. Please check your credentials or create an account.",
+          };
+        }
+        if (code === "auth/too-many-requests") {
+          return {
+            error:
+              "Too many failed attempts. Please try again later or reset your password.",
+          };
+        }
+        return {
+          error:
+            (fbErr as { message?: string })?.message ||
+            "Unable to sign in. Please verify your email and password.",
+        };
       }
-
-      const isAdminEmail = normalized.includes("admin");
-      const newUser: RegisteredUserRecord = {
-        id: `usr-${Date.now()}`,
-        email: normalized,
-        fullName: normalized.split("@")[0].replace(/[._-]/g, " "),
-        companyName: "My Workspace",
-        role: isAdminEmail ? "admin" : "user",
-        planTier: "FREE",
-        subscriptionStatus: "active",
-        creditsBalance: 25,
-        monthlyAllowance: 25,
-        totalConsumed: 0,
-        createdAt: new Date().toISOString(),
-      };
-
-      setAllUsers((prev) => [newUser, ...prev]);
-      setUser(newUser);
-      return {};
     },
-    [allUsers, syncFirebaseUserToStore]
+    [syncFirebaseUserToStore]
   );
 
   // 2. Firebase Email Link (Passwordless Sign-In) — Send Link
@@ -707,7 +664,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return { error: "Password must be at least 6 characters." };
       }
 
-      let firebaseUid = `usr-${Date.now()}`;
+      let firebaseUid = "";
       try {
         const cred = await createUserWithEmailAndPassword(
           auth,
@@ -726,15 +683,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
               "This email is already registered. Please sign in instead.",
           };
         }
+        return {
+          error:
+            (fbErr as { message?: string })?.message ||
+            "Registration failed. Please check your details and try again.",
+        };
       }
 
-      const isAdmin = normalized.includes("admin");
       const newUser: RegisteredUserRecord = {
         id: firebaseUid,
         email: normalized,
         fullName: fullName.trim(),
         companyName: companyName.trim() || `${fullName.trim()}'s Studio`,
-        role: isAdmin ? "admin" : "user",
+        role: "user",
         planTier: "FREE",
         subscriptionStatus: "active",
         creditsBalance: 25,

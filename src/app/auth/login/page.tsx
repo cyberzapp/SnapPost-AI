@@ -26,8 +26,8 @@ export default function LoginPage() {
   const [authMode, setAuthMode] = useState<"password" | "email-link">(
     "password"
   );
-  const [email, setEmail] = useState("admin@snappost.ai");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [magicLinkSentTo, setMagicLinkSentTo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
