@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build & Next.js outputs
+.next/
+out/
+build/
+dist/
+tsconfig.tsbuildinfo
+
+# Environment & Secrets (NEVER commit service account keys)
+.env
+.env.*
+!.env.example
+*firebase-adminsdk*.json
+service-account*.json
+
+# Firebase cache
+.firebase/
+firebase-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
