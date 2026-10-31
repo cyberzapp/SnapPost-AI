@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Sparkles,
@@ -25,6 +25,7 @@ import {
   PRICING_PLANS,
   SOCIAL_PLATFORMS,
 } from "@/lib/constants";
+import { generateDesignVariations } from "@/lib/design-engine";
 import { DesignCanvasRenderer } from "@/components/canvas/DesignCanvasRenderer";
 import { useAppStore } from "@/lib/store";
 
@@ -38,7 +39,81 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [currency, setCurrency] = useState<"USD" | "INR">("USD");
 
-  const sampleVariations = projects[0]?.variations || [];
+  const defaultShowcaseVariations = useMemo(
+    () =>
+      generateDesignVariations({
+        projectId: "proj-landing-showcase",
+        screenshotUrl: DEMO_SAAS_SCREENSHOT_DATA_URL,
+        platformId: "linkedin-post",
+        stylePreset: "Minimal SaaS",
+        variationCount: 4,
+        backgroundStyle: "radial-violet",
+        primaryBrandColor: "#7C3AED",
+        analysis: {
+          screenshotRepresents: "ARR & Net Retention Executive SaaS Dashboard",
+          category: "B2B SaaS Revenue Intelligence",
+          mainPurpose:
+            "Track Annual Recurring Revenue ($1.48M), Net Dollar Retention (134.8%), and AI churn predictions in real time.",
+          productSummary:
+            "PulseMetrics AI unifies subscription telemetry, cohort retention, and automated expansion signals into one zero-config dark-mode workspace.",
+          visibleFeatures: [
+            {
+              name: "ARR & MoM Growth Telemetry ($1,482,900)",
+              description: "Live recurring revenue tracking with +38.4% MoM badge.",
+              confidence: "high",
+            },
+            {
+              name: "Net Dollar Retention Benchmark (134.8%)",
+              description: "Highlights top-decile SaaS expansion velocity.",
+              confidence: "high",
+            },
+            {
+              name: "Automated Revenue Copilot Insights",
+              description:
+                "Surfaces enterprise upgrade triggers and expansion accounts.",
+              confidence: "high",
+            },
+          ],
+          uiElements: [
+            "Dark navigation sidebar",
+            "3 KPI summary cards",
+            "Predictive pipeline area chart",
+            "AI Copilot action feed",
+          ],
+          brandColors: ["#7C3AED", "#3B82F6", "#10B981"],
+          designStyle: "Dark Obsidian SaaS UI",
+          targetAudience: "SaaS Founders, CFOs, RevOps & Growth Teams",
+          uniqueSellingPoints: [
+            "99.4% AI anomaly forecast accuracy",
+            "Real-time Slack expansion alerts",
+            "Built for high-velocity B2B SaaS operators",
+          ],
+          marketingAngles: [
+            "How we grew Net Dollar Retention to 134.8% with AI Revenue Intelligence",
+            "Stop drowning in spreadsheets: Real-time ARR clarity in one view",
+            "Inside PulseMetrics AI 2.0 — Predictive pipeline meets instant insights",
+          ],
+          recommendedPlatforms: [
+            "linkedin-post",
+            "twitter-post",
+            "instagram-post",
+          ],
+          suggestedHeadline:
+            "134.8% Net Retention Starts With Real-Time Clarity",
+          suggestedSubheadline:
+            "Unify ARR telemetry, churn radar, and expansion triggers in one intelligent workspace.",
+          suggestedCta: "Start 14-Day Free Trial →",
+          analyzedBy: "gemini-vision",
+        },
+        isFreePlan: false,
+      }),
+    []
+  );
+
+  const sampleVariations =
+    projects[0]?.variations && projects[0].variations.length > 0
+      ? projects[0].variations
+      : defaultShowcaseVariations;
 
   const faqs = [
     {
