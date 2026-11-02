@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Sparkles, Lock, CheckCircle2 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
+import { LogoIcon } from "@/components/Logo";
 
 export default function ResetPasswordPage() {
   const { updatePassword } = useAppStore();
@@ -31,9 +32,7 @@ export default function ResetPasswordPage() {
     <div className="flex min-h-screen flex-col justify-center bg-[#0B0D14] px-4 py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="flex items-center justify-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
+          <LogoIcon size={40} priority />
           <span className="text-xl font-bold text-white">
             SnapPost <span className="text-violet-400">AI</span>
           </span>

@@ -61,3 +61,107 @@ input[type="file"]::file-selector-button {
 input[type="file"]::file-selector-button:hover {
   background-color: #334155;
 }
+
+/* Compositor-accelerated fluid animations & marquees */
+@keyframes marquee-left {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes scan-beam {
+  0% {
+    transform: translate3d(0, 0%, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 320px, 0);
+    opacity: 0;
+  }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 48s linear infinite;
+  will-change: transform;
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 160s;
+  }
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-right 52s linear infinite;
+  will-change: transform;
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 160s;
+  }
+}
+
+.animate-marquee-left:hover,
+.animate-marquee-right:hover,
+.marquee-paused {
+  animation-play-state: paused !important;
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.animate-scan-beam {
+  animation: scan-beam 3.6s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* Smooth fade-out edge mask for fluid carousels */
+.carousel-edge-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 7%,
+    black 93%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 7%,
+    black 93%,
+    transparent 100%
+  );
+}

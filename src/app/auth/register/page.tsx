@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
+import { LogoIcon } from "@/components/Logo";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -41,9 +42,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen flex-col justify-center bg-[#0B0D14] px-4 py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="flex items-center justify-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-glow">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
+          <LogoIcon size={40} priority />
           <span className="text-xl font-bold text-white">
             SnapPost <span className="text-violet-400">AI</span>
           </span>

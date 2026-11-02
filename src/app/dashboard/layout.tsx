@@ -21,6 +21,7 @@ import {
   Sliders,
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
+import { LogoIcon } from "@/components/Logo";
 
 export default function DashboardLayout({
   children,
@@ -48,9 +49,7 @@ export default function DashboardLayout({
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#0B0D14] px-4 text-center">
         <div className="max-w-md rounded-2xl border border-white/10 bg-[#121520] p-8 shadow-2xl">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-600/20 text-violet-400">
-            <Sparkles className="h-6 w-6" />
-          </div>
+          <LogoIcon size={48} className="mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white">
             Authentication Required
           </h2>
@@ -105,9 +104,7 @@ export default function DashboardLayout({
       <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-[#0F121C] lg:flex">
         <div className="flex h-16 items-center justify-between border-b border-white/10 px-6">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-blue-600 shadow-glow">
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
+            <LogoIcon size={32} />
             <span className="text-base font-bold tracking-tight text-white">
               SnapPost <span className="text-violet-400">AI</span>
             </span>
@@ -230,9 +227,7 @@ export default function DashboardLayout({
         {/* Mobile Header */}
         <header className="flex h-16 items-center justify-between border-b border-white/10 bg-[#0F121C] px-4 lg:hidden">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-600">
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
+            <LogoIcon size={30} />
             <span className="text-base font-bold text-white">SnapPost AI</span>
           </Link>
 

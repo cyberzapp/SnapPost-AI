@@ -28,6 +28,8 @@ import {
 import { generateDesignVariations } from "@/lib/design-engine";
 import { DesignCanvasRenderer } from "@/components/canvas/DesignCanvasRenderer";
 import { useAppStore } from "@/lib/store";
+import { LogoIcon } from "@/components/Logo";
+import { ReviewCarouselSection } from "@/components/marketing/ReviewCarouselSection";
 
 export default function LandingPage() {
   const { user, projects } = useAppStore();
@@ -143,16 +145,26 @@ export default function LandingPage() {
       {/* Top Sticky Navbar */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0B0D14]/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-glow">
-              <Sparkles className="h-5 w-5 text-white" />
-            </div>
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <LogoIcon size={36} priority />
             <span className="text-lg font-bold tracking-tight text-white">
               SnapPost <span className="text-violet-400">AI</span>
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-8 text-sm font-medium text-slate-300 md:flex">
+          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-300 md:flex">
+            <Link
+              href="/app"
+              className="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-bold text-violet-300 transition hover:bg-violet-500/20"
+            >
+              Fluid Showcase (/app)
+            </Link>
+            <Link
+              href="/benefits"
+              className="transition-colors hover:text-white"
+            >
+              Visual Benefits
+            </Link>
             <a
               href="#features"
               className="transition-colors hover:text-white"
@@ -808,6 +820,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* FLUID MOVING REVIEW CAROUSELS */}
+      <ReviewCarouselSection />
+
       {/* FAQ SECTION */}
       <section className="py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -856,15 +871,19 @@ export default function LandingPage() {
       <footer className="border-t border-white/10 bg-[#090B10] py-12">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:flex-row sm:px-6 lg:px-8">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-600">
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
+            <LogoIcon size={32} />
             <span className="text-base font-bold text-white">
               SnapPost <span className="text-violet-400">AI</span>
             </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-6 text-sm text-slate-400">
+            <Link href="/app" className="text-violet-400 hover:text-white">
+              Fluid Showcase (/app)
+            </Link>
+            <Link href="/benefits" className="hover:text-white">
+              Visual Benefits (/benefits)
+            </Link>
             <Link href="/dashboard" className="hover:text-white">
               Dashboard
             </Link>
