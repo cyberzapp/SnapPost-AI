@@ -28,11 +28,11 @@ import {
 import { generateDesignVariations } from "@/lib/design-engine";
 import { DesignCanvasRenderer } from "@/components/canvas/DesignCanvasRenderer";
 import { useAppStore } from "@/lib/store";
-import { LogoIcon } from "@/components/Logo";
+import { SiteHeader, SiteFooter } from "@/components/marketing/SiteHeader";
 import { ReviewCarouselSection } from "@/components/marketing/ReviewCarouselSection";
 
 export default function LandingPage() {
-  const { user, projects } = useAppStore();
+  const { projects } = useAppStore();
   const [compareMode, setCompareMode] = useState<"split" | "before" | "after">(
     "split"
   );
@@ -103,8 +103,8 @@ export default function LandingPage() {
           suggestedHeadline:
             "134.8% Net Retention Starts With Real-Time Clarity",
           suggestedSubheadline:
-            "Unify ARR telemetry, churn radar, and expansion triggers in one intelligent workspace.",
-          suggestedCta: "Start 14-Day Free Trial →",
+            "Unify revenue growth, retention metrics, and customer insights in one workspace.",
+          suggestedCta: "Start 14-Day Free Trial",
           analyzedBy: "gemini-vision",
         },
         isFreePlan: false,
@@ -142,92 +142,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#0B0D14] text-slate-100 selection:bg-violet-600/30">
-      {/* Top Sticky Navbar */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0B0D14]/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <LogoIcon size={36} priority />
-            <span className="text-lg font-bold tracking-tight text-white">
-              SnapPost <span className="text-violet-400">AI</span>
-            </span>
-          </Link>
-
-          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-300 md:flex">
-            <Link
-              href="/app"
-              className="rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-bold text-violet-300 transition hover:bg-violet-500/20"
-            >
-              Fluid Showcase (/app)
-            </Link>
-            <Link
-              href="/benefits"
-              className="transition-colors hover:text-white"
-            >
-              Visual Benefits
-            </Link>
-            <a
-              href="#features"
-              className="transition-colors hover:text-white"
-            >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="transition-colors hover:text-white"
-            >
-              How It Works
-            </a>
-            <a
-              href="#showcase"
-              className="transition-colors hover:text-white"
-            >
-              Before &amp; After
-            </a>
-            <a
-              href="#pricing"
-              className="transition-colors hover:text-white"
-            >
-              Pricing
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            {user ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
-                >
-                  Dashboard ({user.creditsBalance} cr)
-                </Link>
-                <Link
-                  href="/dashboard/create"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:bg-violet-500"
-                >
-                  <span>Create Post</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/auth/login"
-                  className="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-300 transition hover:text-white"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/auth/register"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:bg-violet-500"
-                >
-                  <span>Get Started</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      {/* Shared Header with 4 Hover Mega-Menus */}
+      <SiteHeader />
 
       {/* HERO SECTION */}
       <section className="relative overflow-hidden pt-14 pb-24 lg:pt-20">
@@ -282,8 +198,10 @@ export default function LandingPage() {
                 <span className="text-xs font-semibold uppercase tracking-wider text-violet-400">
                   Interactive Transformation Preview
                 </span>
-                <h2 className="text-lg font-bold text-white sm:text-xl">
-                  Raw Product Screenshot → Agency-Designed Social Asset
+                <h2 className="flex flex-wrap items-center gap-2 text-lg font-bold text-white sm:text-xl">
+                  <span>Raw Product Screenshot</span>
+                  <ArrowRight className="h-4 w-4 text-violet-400" />
+                  <span>Agency-Designed Social Asset</span>
                 </h2>
               </div>
 
@@ -359,14 +277,17 @@ export default function LandingPage() {
                       aria-label="Adjust framing preview intensity"
                     />
                     <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-300">
-                      <span className="rounded-md bg-violet-500/15 px-2.5 py-1 text-violet-300">
-                        ✓ Detected: $1.48M ARR Telemetry
+                      <span className="inline-flex items-center gap-1 rounded-md bg-violet-500/15 px-2.5 py-1 text-violet-300">
+                        <CheckCircle2 className="h-3 w-3" />
+                        <span>Detected: $1.48M Annual Revenue</span>
                       </span>
-                      <span className="rounded-md bg-blue-500/15 px-2.5 py-1 text-blue-300">
-                        ✓ Detected: 134.8% Net Retention
+                      <span className="inline-flex items-center gap-1 rounded-md bg-blue-500/15 px-2.5 py-1 text-blue-300">
+                        <CheckCircle2 className="h-3 w-3" />
+                        <span>Detected: 134.8% Net Retention</span>
                       </span>
-                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 text-emerald-300">
-                        ✓ Brand Palette Extracted
+                      <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2.5 py-1 text-emerald-300">
+                        <CheckCircle2 className="h-3 w-3" />
+                        <span>Brand Colors Matched</span>
                       </span>
                     </div>
                   </div>
@@ -867,45 +788,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-white/10 bg-[#090B10] py-12">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:flex-row sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2.5">
-            <LogoIcon size={32} />
-            <span className="text-base font-bold text-white">
-              SnapPost <span className="text-violet-400">AI</span>
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-6 text-sm text-slate-400">
-            <Link href="/app" className="text-violet-400 hover:text-white">
-              Fluid Showcase (/app)
-            </Link>
-            <Link href="/benefits" className="hover:text-white">
-              Visual Benefits (/benefits)
-            </Link>
-            <Link href="/dashboard" className="hover:text-white">
-              Dashboard
-            </Link>
-            <Link href="/dashboard/create" className="hover:text-white">
-              Create Post
-            </Link>
-            <Link href="/dashboard/templates" className="hover:text-white">
-              Templates
-            </Link>
-            <Link href="/dashboard/billing" className="hover:text-white">
-              Pricing &amp; Billing
-            </Link>
-            <Link href="/auth/login" className="hover:text-white">
-              Sign In
-            </Link>
-          </div>
-
-          <p className="text-xs text-slate-500">
-            © {new Date().getFullYear()} SnapPost AI Inc. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      {/* Shared Footer */}
+      <SiteFooter />
     </div>
   );
 }

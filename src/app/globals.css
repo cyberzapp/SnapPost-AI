@@ -148,7 +148,7 @@ input[type="file"]::file-selector-button:hover {
   }
 }
 
-/* Smooth fade-out edge mask for fluid carousels */
+/* Smooth fade-out edge mask for carousels */
 .carousel-edge-mask {
   mask-image: linear-gradient(
     to right,
@@ -164,4 +164,27 @@ input[type="file"]::file-selector-button:hover {
     black 93%,
     transparent 100%
   );
+}
+
+/* 3D Carousel Cylinder Rotation */
+@keyframes ring-spin-3d {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(-360deg);
+  }
+}
+
+.ring-spin {
+  animation: ring-spin-3d 34s linear infinite;
+  will-change: transform;
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 120s;
+  }
+}
+
+.ring-spin:hover,
+.ring-spin-paused {
+  animation-play-state: paused !important;
 }

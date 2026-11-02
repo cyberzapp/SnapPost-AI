@@ -11,7 +11,7 @@ import {
   ChevronRight,
   Quote,
   TrendingUp,
-  Sparkles,
+  Award,
 } from "lucide-react";
 
 export interface CustomerReview {
@@ -20,7 +20,7 @@ export interface CustomerReview {
   handle: string;
   role: string;
   company: string;
-  persona: "SaaS Founders" | "Agencies" | "DevTools" | "Growth Teams";
+  persona: "SaaS Founders" | "Agencies" | "Developers" | "Marketing Teams";
   avatarInitials: string;
   avatarGradient: string;
   platform: "LinkedIn" | "X / Twitter" | "Product Hunt" | "Instagram";
@@ -37,51 +37,51 @@ const REVIEWS: CustomerReview[] = [
     name: "Arjun Mehta",
     handle: "@arjun_builds",
     role: "Co-Founder & CEO",
-    company: "MetricFlow AI (YC W25)",
+    company: "MetricFlow AI",
     persona: "SaaS Founders",
     avatarInitials: "AM",
     avatarGradient: "from-violet-600 to-indigo-600",
     platform: "LinkedIn",
     rating: 5,
     date: "2 days ago",
-    metricBadge: "+340% LinkedIn Post Impressions",
-    headline: "Replaced our 45-minute Figma changelog workflow with a 30-second AI pipeline.",
+    metricBadge: "+340% LinkedIn Post Views",
+    headline: "Replaced our 45-minute design routine with a 30-second workflow.",
     quote:
-      "Every Friday we ship 4 product updates. Before SnapPost AI, I'd drop raw browser screenshots that got 800 views. Now Gemini Vision pulls our exact ARR numbers from the screenshot, wraps it in a dark obsidian frame, and writes a founder-style LinkedIn post that averages 18,000+ impressions.",
+      "Every Friday we share 4 product updates. Before SnapPost AI, I posted plain browser screenshots that got 800 views. Now SnapPost reads our growth numbers directly from the screenshot, frames it cleanly, and writes a founder-style LinkedIn post that averages 18,000+ views.",
   },
   {
     id: "rev-2",
     name: "Elena Rostova",
     handle: "@elena_designops",
     role: "Managing Partner",
-    company: "Veloce B2B Social Agency",
+    company: "Veloce Social Studio",
     persona: "Agencies",
     avatarInitials: "ER",
     avatarGradient: "from-fuchsia-600 to-rose-600",
     platform: "Instagram",
     rating: 5,
     date: "5 days ago",
-    metricBadge: "14+ Designer Hours Saved / Week",
-    headline: "Multi-Client Brand Kits + 1-Click ZIP export is an unfair advantage for agencies.",
+    metricBadge: "14+ Hours Saved Weekly",
+    headline: "Saved Brand Kits and one-click ZIP downloads save our agency hours every day.",
     quote:
-      "We manage social media for 11 B2B SaaS retainers. SnapPost AI lets us store each client's hex palette, typography, and CTA in Brand Kits. We upload one product screenshot and export LinkedIn 1200×1200, X 1600×900, and IG 1080×1350 assets in a single ZIP archive.",
+      "We manage social media for 11 software clients. SnapPost AI lets us save each client's brand colors, fonts, and call-to-action in Brand Kits. We upload one product screenshot and download LinkedIn, X, and Instagram sizes in a single ZIP file.",
   },
   {
     id: "rev-3",
     name: "Marcus Vance",
     handle: "@mvance_dev",
-    role: "Staff DevRel Engineer",
+    role: "Lead Developer Advocate",
     company: "HyperQuery Cloud",
-    persona: "DevTools",
+    persona: "Developers",
     avatarInitials: "MV",
     avatarGradient: "from-cyan-500 to-blue-600",
     platform: "X / Twitter",
     rating: 5,
     date: "1 week ago",
-    metricBadge: "4.6x Higher Click-Through on X",
-    headline: "Finally an AI tool that doesn't hallucinate or distort our actual UI screenshot.",
+    metricBadge: "4.6x More Link Clicks on X",
+    headline: "Keeps our real product screenshot 100% sharp without fake stock graphics.",
     quote:
-      "Developers hate fake AI stock art. SnapPost AI keeps our real terminal and query latency screenshot 100% pixel-accurate while adding crisp glass framing, verified latency callout pills, and zero-fluff technical X threads.",
+      "Developers scroll right past generic AI illustrations. SnapPost AI keeps our actual code and speed charts crystal clear while adding dark-mode framing, highlight badges, and concise technical posts for X.",
   },
   {
     id: "rev-4",
@@ -89,22 +89,22 @@ const REVIEWS: CustomerReview[] = [
     handle: "@priya_growth",
     role: "VP of Marketing",
     company: "FinStack Ledger",
-    persona: "Growth Teams",
+    persona: "Marketing Teams",
     avatarInitials: "PN",
     avatarGradient: "from-emerald-500 to-teal-600",
     platform: "Product Hunt",
     rating: 5,
     date: "3 days ago",
-    metricBadge: "#1 Product of the Day Assets",
-    headline: "We generated our entire Product Hunt & LinkedIn launch kit in 12 minutes.",
+    metricBadge: "#1 Launch Day Graphics",
+    headline: "We created our entire Product Hunt and LinkedIn launch graphics in 12 minutes.",
     quote:
-      "The Visual Layer Editor is what sealed the deal for our growth team. AI generates 4 genuinely different layout archetypes—Split Hero, Perspective Tilt, Floating Cards—and we can tweak any headline or badge right on the canvas before exporting Ultra-HD PNGs.",
+      "The Visual Layer Editor made all the difference for our team. SnapPost generates 4 clean layout styles from one screenshot, and we can edit any headline or badge directly on the canvas before downloading high-resolution PNGs.",
   },
   {
     id: "rev-5",
-    name: "Lucas Bergström",
+    name: "Lucas Bergstrom",
     handle: "@lucas_indie",
-    role: "Solo Founder",
+    role: "Founder",
     company: "DraftPilot Studio",
     persona: "SaaS Founders",
     avatarInitials: "LB",
@@ -112,34 +112,34 @@ const REVIEWS: CustomerReview[] = [
     platform: "X / Twitter",
     rating: 5,
     date: "4 days ago",
-    metricBadge: "$14k MRR Launch Campaign",
-    headline: "Looks like I hired a $5,000/mo brand designer for my build-in-public updates.",
+    metricBadge: "$14k Monthly Revenue Launch",
+    headline: "Looks like I hired a dedicated brand designer for my weekly product updates.",
     quote:
-      "I have zero design skills. I drop a messy localhost screenshot into SnapPost AI, pick 'Premium Product Launch', and out comes a studio-grade showcase with hooks and hashtags tailored for X and LinkedIn.",
+      "I am a developer, not a designer. I drop a quick product screenshot into SnapPost AI, pick the Product Launch style, and get a polished visual card with ready-to-post captions for X and LinkedIn.",
   },
   {
     id: "rev-6",
     name: "Hannah Kim",
     handle: "@hannah_pmm",
-    role: "Lead Product Marketer",
+    role: "Product Marketing Lead",
     company: "Synthetix Ops",
-    persona: "Growth Teams",
+    persona: "Marketing Teams",
     avatarInitials: "HK",
     avatarGradient: "from-blue-600 to-violet-600",
     platform: "LinkedIn",
     rating: 5,
     date: "6 days ago",
     metricBadge: "3.2x More Demo Signups",
-    headline: "Platform-native copywriting actually understands LinkedIn vs. Instagram tone.",
+    headline: "Captions are tailored for each social network instead of sounding generic.",
     quote:
-      "Most caption generators sound robotic. SnapPost AI reads the actual metrics inside our screenshot and writes scannable founder hooks for LinkedIn and visual storytelling captions for Instagram.",
+      "Most caption tools sound repetitive. SnapPost AI reads the actual numbers inside our screenshot and writes professional posts for LinkedIn and engaging visual captions for Instagram.",
   },
   {
     id: "rev-7",
     name: "Devon Brooks",
     handle: "@devon_agency",
     role: "Creative Director",
-    company: "NorthStar SaaS Media",
+    company: "NorthStar Media",
     persona: "Agencies",
     avatarInitials: "DB",
     avatarGradient: "from-purple-600 to-pink-600",
@@ -147,9 +147,9 @@ const REVIEWS: CustomerReview[] = [
     rating: 5,
     date: "1 week ago",
     metricBadge: "42 Client Campaigns Shipped",
-    headline: "Our junior marketers now produce senior-level social visuals in under a minute.",
+    headline: "Our team creates studio-quality social graphics in under a minute.",
     quote:
-      "Between the 12 agency style presets, automatic palette extraction, and instant canvas resizing across 8 social formats, SnapPost AI has become our agency's daily operating system.",
+      "Between the 12 curated style presets, automatic brand color detection, and instant resizing across 8 social formats, SnapPost AI has become our team's favorite daily tool.",
   },
   {
     id: "rev-8",
@@ -157,16 +157,16 @@ const REVIEWS: CustomerReview[] = [
     handle: "@rohan_oss",
     role: "Creator & Maintainer",
     company: "EdgeVector DB",
-    persona: "DevTools",
+    persona: "Developers",
     avatarInitials: "RK",
     avatarGradient: "from-sky-500 to-indigo-600",
     platform: "X / Twitter",
     rating: 5,
     date: "2 weeks ago",
     metricBadge: "+2,900 GitHub Stars in 10 Days",
-    headline: "The Developer Showcase preset makes benchmark screenshots pop on X feeds.",
+    headline: "The Developer Release style makes benchmark charts stand out on X.",
     quote:
-      "Turned our dry benchmark table screenshot into a high-contrast dark mode social card with verified callout badges. Our release tweet hit 140k views and drove 2,900 GitHub stars.",
+      "We turned our plain benchmark screenshot into a crisp dark-mode card with clear highlight badges. Our release post reached 140,000 views and brought in 2,900 GitHub stars.",
   },
 ];
 
@@ -205,7 +205,10 @@ export function ReviewCarouselSection() {
   const rowTwoReviews = [...REVIEWS.slice(4, 8), ...REVIEWS.slice(4, 8)];
 
   return (
-    <section className="relative overflow-hidden border-t border-white/10 bg-[#0A0D16] py-24">
+    <section
+      id="reviews"
+      className="relative overflow-hidden border-t border-white/10 bg-[#0A0D16] py-24"
+    >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(ellipse_at_center,_rgba(124,58,237,0.16),_transparent_70%)]" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -213,43 +216,49 @@ export function ReviewCarouselSection() {
         <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-3.5 py-1 text-xs font-semibold text-violet-300">
-              <Sparkles className="h-3.5 w-3.5 text-violet-400" />
-              <span>VERIFIED CUSTOMER LOVE &amp; SOCIAL PROOF</span>
+              <Award className="h-3.5 w-3.5 text-violet-400" />
+              <span>CUSTOMER STORIES &amp; RESULTS</span>
             </div>
             <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Loved by High-Velocity Founders, Agencies &amp; Growth Teams
+              Trusted by Founders, Agencies &amp; Marketing Teams
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-slate-400 sm:text-base">
-              Real teams shipping scroll-stopping social visuals from product
-              screenshots every single day.
+              See how fast-moving teams turn everyday product screenshots into
+              high-performing social posts.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {["All", "SaaS Founders", "Agencies", "DevTools", "Growth Teams"].map(
-              (tab) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => {
-                    setSelectedPersona(tab);
-                    setSpotlightIndex(0);
-                  }}
-                  className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition ${
-                    selectedPersona === tab
-                      ? "bg-violet-600 text-white shadow-glow"
-                      : "border border-white/10 bg-[#121624] text-slate-300 hover:border-white/25 hover:text-white"
-                  }`}
-                >
-                  {tab}
-                </button>
-              )
-            )}
+            {[
+              "All",
+              "SaaS Founders",
+              "Agencies",
+              "Developers",
+              "Marketing Teams",
+            ].map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => {
+                  setSelectedPersona(tab);
+                  setSpotlightIndex(0);
+                }}
+                className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition ${
+                  selectedPersona === tab
+                    ? "bg-violet-600 text-white shadow-glow"
+                    : "border border-white/10 bg-[#121624] text-slate-300 hover:border-white/25 hover:text-white"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
 
             <button
               type="button"
               onClick={() => setIsPaused((p) => !p)}
-              aria-label={isPaused ? "Resume review carousel" : "Pause review carousel"}
+              aria-label={
+                isPaused ? "Resume review carousel" : "Pause review carousel"
+              }
               className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
             >
               {isPaused ? (
@@ -267,7 +276,7 @@ export function ReviewCarouselSection() {
           </div>
         </div>
 
-        {/* Interactive Spotlight Review Card Carousel */}
+        {/* Interactive Spotlight Review Card */}
         <div className="mt-10">
           <div className="relative overflow-hidden rounded-3xl border border-violet-500/30 bg-gradient-to-br from-[#131726] via-[#101320] to-[#17132B] p-6 shadow-2xl sm:p-10">
             <div className="grid items-center gap-8 lg:grid-cols-12">
@@ -296,7 +305,8 @@ export function ReviewCarouselSection() {
                         <span>{currentSpotlight.metricBadge}</span>
                       </span>
                       <span className="rounded-md border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-medium text-slate-300">
-                        Posted on {currentSpotlight.platform} • {currentSpotlight.date}
+                        Shared on {currentSpotlight.platform} •{" "}
+                        {currentSpotlight.date}
                       </span>
                     </div>
 
@@ -321,7 +331,7 @@ export function ReviewCarouselSection() {
                               {currentSpotlight.name}
                             </span>
                             <CheckCircle2 className="h-4 w-4 text-sky-400" />
-                            <span className=" font-mono text-xs text-slate-400">
+                            <span className="font-mono text-xs text-slate-400">
                               {currentSpotlight.handle}
                             </span>
                           </div>
@@ -338,12 +348,12 @@ export function ReviewCarouselSection() {
                 </AnimatePresence>
               </div>
 
-              {/* Right Column: Spotlight Controls & Verified Trust Score */}
+              {/* Right Column: Verified Rating Summary */}
               <div className="flex flex-col justify-between rounded-2xl border border-white/10 bg-[#0B0D14]/90 p-6 lg:col-span-4">
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wider text-violet-400">
-                      Customer Benchmark
+                      Customer Rating
                     </span>
                     <Quote className="h-5 w-5 text-violet-400/50" />
                   </div>
@@ -354,25 +364,25 @@ export function ReviewCarouselSection() {
                     <span className="text-sm text-slate-400">/ 5.0 average</span>
                   </div>
                   <p className="mt-1 text-xs text-slate-400">
-                    Based on 480+ verified SaaS founders, DevRel teams, and
-                    social agencies.
+                    Based on 480+ verified founders, product marketers, and
+                    creative agencies.
                   </p>
 
                   <div className="mt-5 space-y-2.5 border-t border-white/10 pt-4 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Screenshot Fidelity</span>
+                      <span className="text-slate-400">Screenshot Quality</span>
                       <span className="font-mono font-bold text-emerald-400">
-                        100% Unaltered UI
+                        100% Sharp UI
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Avg. Time to Export</span>
+                      <span className="text-slate-400">Average Time to Post</span>
                       <span className="font-mono font-bold text-violet-300">
                         38 Seconds
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Persona Category</span>
+                      <span className="text-slate-400">Customer Group</span>
                       <span className="rounded bg-violet-500/20 px-2 py-0.5 font-semibold text-violet-300">
                         {currentSpotlight.persona}
                       </span>
@@ -422,9 +432,9 @@ export function ReviewCarouselSection() {
         </div>
       </div>
 
-      {/* Fluid Infinite Moving Marquee Carousels (2 Opposite-Direction Rows) */}
+      {/* Continuous Moving Review Carousels (2 Opposite-Direction Rows) */}
       <div className="carousel-edge-mask mt-12 space-y-5 overflow-hidden py-2">
-        {/* Track 1: Smooth Left-Moving Stream */}
+        {/* Track 1: Left-Moving Row */}
         <div
           className={`animate-marquee-left gap-5 px-4 ${
             isPaused ? "marquee-paused" : ""
@@ -480,7 +490,7 @@ export function ReviewCarouselSection() {
           ))}
         </div>
 
-        {/* Track 2: Smooth Right-Moving Stream */}
+        {/* Track 2: Right-Moving Row */}
         <div
           className={`animate-marquee-right gap-5 px-4 ${
             isPaused ? "marquee-paused" : ""
