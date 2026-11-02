@@ -207,7 +207,7 @@ export function ReviewCarouselSection() {
   return (
     <section
       id="reviews"
-      className="relative overflow-hidden border-t border-white/10 bg-[#0A0D16] py-24"
+      className="relative overflow-hidden bg-[#0B0D14] py-24"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(ellipse_at_center,_rgba(124,58,237,0.16),_transparent_70%)]" />
 

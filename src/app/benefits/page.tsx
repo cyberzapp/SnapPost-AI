@@ -308,7 +308,8 @@ export default function CreativeBenefitsPage() {
       </section>
 
       {/* 2. CREATIVE VISUAL BENEFIT BENTO GRID */}
-      <section className="relative border-y border-white/10 bg-[#090C15] py-24">
+      <section className="relative bg-[#0B0D14] py-24">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(ellipse_at_top,_rgba(124,58,237,0.08),_transparent_70%)]" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1 text-xs font-semibold text-violet-300">
@@ -433,7 +434,8 @@ export default function CreativeBenefitsPage() {
       </section>
 
       {/* 3. INTERACTIVE TIME & BUDGET SAVINGS CALCULATOR */}
-      <section className="relative border-b border-white/10 py-24">
+      <section className="relative bg-[#0B0D14] py-24">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.06),_transparent_70%)]" />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-violet-500/30 bg-gradient-to-br from-[#131728] via-[#101320] to-[#17132B] p-8 shadow-2xl sm:p-12">
             <div className="grid items-center gap-10 lg:grid-cols-12">

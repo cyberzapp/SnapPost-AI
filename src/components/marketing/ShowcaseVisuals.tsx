@@ -573,8 +573,9 @@ export function MovingResultsCarousel() {
   return (
     <section
       id="results-carousel"
-      className="relative overflow-hidden border-y border-white/10 bg-[#080B13] py-20"
+      className="relative overflow-hidden bg-[#0B0D14] py-20"
     >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(124,58,237,0.08),_transparent_70%)]" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>

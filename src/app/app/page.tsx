@@ -294,8 +294,9 @@ export default function ShowcaseAppLandingPage() {
       {/* 3. OUR EXPERT SERVICES SECTION */}
       <section
         id="expert-services"
-        className="relative border-b border-white/10 bg-[#090C15] py-24"
+        className="relative bg-[#0B0D14] py-24"
       >
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(ellipse_at_top,_rgba(124,58,237,0.08),_transparent_70%)]" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
             <div>
@@ -378,8 +379,9 @@ export default function ShowcaseAppLandingPage() {
       {/* 4. INTERACTIVE DESIGN CATEGORIES EXPLORER */}
       <section
         id="categories"
-        className="relative border-b border-white/10 py-24"
+        className="relative bg-[#0B0D14] py-24"
       >
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(ellipse_at_top,_rgba(217,70,239,0.06),_transparent_70%)]" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-4 py-1 text-xs font-semibold text-fuchsia-300">
@@ -516,8 +518,9 @@ export default function ShowcaseAppLandingPage() {
       {/* 6. UPCOMING FEATURES & PRODUCT ROADMAP */}
       <section
         id="upcoming"
-        className="relative border-t border-white/10 bg-[#090C15] py-24"
+        className="relative bg-[#0B0D14] py-24"
       >
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.06),_transparent_70%)]" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
             <div>
@@ -620,7 +623,7 @@ export default function ShowcaseAppLandingPage() {
       <ReviewCarouselSection />
 
       {/* 8. BOTTOM CALL TO ACTION */}
-      <section className="relative overflow-hidden border-t border-white/10 py-24">
+      <section className="relative overflow-hidden bg-[#0B0D14] py-24">
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-950/70 via-[#121520] to-indigo-950/60 p-10 shadow-2xl sm:p-14">
             <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-violet-400/30 bg-violet-500/10 px-3.5 py-1 text-xs font-semibold text-violet-200">
